@@ -5,10 +5,14 @@ import PageHeader from '../components/PageHeader';
 import Loader from '../components/Loader';
 import ReedemCard, { type Reedem } from '../components/ReedemCard';
 import { Gift, CreditCard, BookOpen, Package } from 'lucide-react';
+import type React from 'react';
 
 const FILTERS = ['all', 'unlocked', 'locked', 'coming_soon'] as const;
 
-const FILTER_LABELS: Record<typeof FILTERS[number], { label: string; icon: JSX.Element }> = {
+const FILTER_LABELS: Record<
+  typeof FILTERS[number],
+  { label: string; icon: React.ReactNode }
+> = {
   all: { label: 'All Rewards', icon: <Gift className="inline w-4 h-4 mr-1" /> },
   unlocked: { label: 'Unlocked', icon: <CreditCard className="inline w-4 h-4 mr-1" /> },
   locked: { label: 'Locked', icon: <BookOpen className="inline w-4 h-4 mr-1" /> },
@@ -21,7 +25,7 @@ export default function ReedemPage() {
   const [userPoints, setUserPoints] = useState(0);
   const [activeFilter, setActiveFilter] = useState<typeof FILTERS[number]>('all');
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
+  const [page, _setPage] = useState(1);
   const pageSize = 12;
 
   useEffect(() => {
@@ -68,12 +72,14 @@ export default function ReedemPage() {
     else {
       alert(`Successfully redeemed ${reedem.title}!`);
       setUserPoints(prev => prev - (reedem.points ?? 0));
-      setReedems(prev => prev.map(r => (r.id === reedem.id ? { ...r, status: 'unlocked' } : r)));
+      setReedems(prev =>
+        prev.map(r => (r.id === reedem.id ? { ...r, status: 'unlocked' } : r))
+      );
       await supabase.from('reward_redemptions').insert({ user_id: user.id, reward_id: reedem.id });
     }
   };
 
-  const filteredReedems = reedems.filter(r => activeFilter === 'all' ? true : r.status === activeFilter);
+  const filteredReedems = reedems.filter(r => (activeFilter === 'all' ? true : r.status === activeFilter));
 
   const counts = {
     all: reedems.length,

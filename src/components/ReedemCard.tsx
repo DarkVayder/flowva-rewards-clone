@@ -19,13 +19,11 @@ interface ReedemCardProps {
 
 export default function ReedemCard({
   reedem,
-  userPoints,
 }: ReedemCardProps) {
-  const [isRedeeming] = useState(false);
+  const [_isRedeeming] = useState(false);
 
   // 🔒 FORCE-LOCK everything
-  const isLocked = true;
-
+ 
   const notifyLocked = () => {
     toast.info('This reward is locked. Keep earning points to unlock 💪', {
       position: 'top-center',
