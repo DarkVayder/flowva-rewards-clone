@@ -25,34 +25,41 @@ export default function Login() {
         const { data, error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
 
-        if (data.user) {
-          const referralCode = crypto.randomUUID().slice(0, 8);
+        if (!data.user) throw new Error('Signup failed');
 
-          const { error: profileError } = await supabase.from('profiles').insert({
-            id: data.user.id,
-            points: 0,
-            referral_code: referralCode,
-            referred_by: referredBy || null,
-            created_at: new Date(),
+        const referralCode = crypto.randomUUID().slice(0, 8);
+
+        const { error: profileError } = await supabase.from('profiles').insert({
+          id: data.user.id,
+          email,
+          points: 0,
+          referral_code: referralCode,
+          referred_by: referredBy || null,
+          referral_count: 0,
+          created_at: new Date(),
+        });
+
+        if (profileError) throw profileError;
+
+        await supabase.from('streaks').insert({
+          user_id: data.user.id,
+          streak_count: 0,
+        });
+
+        if (referredBy) {
+          await supabase.rpc('increment_profile_referrals', {
+            ref_code: referredBy,
+            increment: 1,
           });
 
-          if (profileError) throw profileError;
-
-          await supabase.from('streaks').insert({
-            user_id: data.user.id,
-            streak_count: 0,
+          await supabase.rpc('increment_user_points', {
+            uid: referredBy,
+            amount: 25,
           });
-
-          if (referredBy) {
-            await supabase.rpc('increment_profile_stats', {
-              ref_code: referredBy,
-              point_inc: 100,
-            });
-          }
-
-          await supabase.auth.signInWithPassword({ email, password });
-          toast.success('Account created successfully 🎉');
         }
+
+        await supabase.auth.signInWithPassword({ email, password });
+        toast.success('Account created successfully 🎉');
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;

@@ -6,36 +6,35 @@ export async function createUser(email: string, referredBy?: string) {
 
   const { data, error } = await supabase
     .from('profiles')
-    .insert([
-      {
-        email,
-        referral_code: referralCode,
-        referred_by: referredBy || null,
-        points: 0,
-        referral_count: 0,
-        created_at: new Date(),
-      },
-    ])
+    .insert({
+      email,
+      referral_code: referralCode,
+      referred_by: referredBy || null,
+      referral_count: 0,
+      points: 0,
+    })
     .select()
     .single();
 
   if (error) throw error;
 
-  const userId = data.id;
-
   if (referredBy) {
-    await supabase.rpc('increment_profile_referrals', { ref_code: referredBy, increment: 1 });
+    await supabase.rpc('increment_profile_referrals', {
+      ref_code: referredBy,
+    });
 
-    await supabase.rpc('increment_user_points', { uid: referredBy, amount: 25 });
+    await supabase.rpc('reward_referrer', {
+      ref_code: referredBy,
+      amount: 25,
+    });
   }
 
   await supabase
     .from('user_points')
-    .upsert({ user_id: userId, points: 0 });
+    .upsert({ user_id: data.id, points: 0 });
 
   return data;
 }
-
 
 /**
  * Fetch a user's referral stats and referral link
@@ -45,12 +44,11 @@ export async function getReferralStats(userId: string) {
     .from('profiles')
     .select('referral_count, points, referral_code')
     .eq('id', userId)
-    .maybeSingle(); // <-- changed
+    .maybeSingle();
 
   if (error) throw error;
 
   if (!data) {
-    // No row found, return defaults
     return {
       referrals: 0,
       pointsEarned: 0,

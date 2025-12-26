@@ -30,7 +30,6 @@ export default function PageHeader({
   const [fullName, setFullName] = useState('there');
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  /* ---------------- Fetch user ---------------- */
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       const name =
@@ -40,7 +39,6 @@ export default function PageHeader({
     });
   }, []);
 
-  /* ---------------- Init notifications ---------------- */
   useEffect(() => {
     setNotifications([
       {
@@ -67,7 +65,6 @@ Your journey to smarter productivity starts here.`,
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
-  /* ---------------- Lock body scroll ---------------- */
   useEffect(() => {
     if (open || selected) {
       document.body.style.overflow = 'hidden';
@@ -76,7 +73,6 @@ Your journey to smarter productivity starts here.`,
     }
   }, [open, selected]);
 
-  /* ---------------- ESC handling ---------------- */
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -88,7 +84,6 @@ Your journey to smarter productivity starts here.`,
     return () => window.removeEventListener('keydown', onEsc);
   }, []);
 
-  /* ---------------- Actions ---------------- */
   const markAllRead = () => {
     setNotifications(prev =>
       prev.map(n => ({ ...n, unread: false }))
@@ -113,7 +108,6 @@ Your journey to smarter productivity starts here.`,
 
   return (
     <>
-      {/* ---------------- Header ---------------- */}
       <header className="bg-white border-b border-gray-200 px-4 sm:px-6 md:px-8 py-4 md:py-6 relative">
         <div className="flex items-start justify-between">
           <div>
@@ -132,7 +126,6 @@ Your journey to smarter productivity starts here.`,
             )}
           </div>
 
-          {/* Bell */}
           <button
             onClick={() => setOpen(v => !v)}
             className="relative p-2.5 rounded-full hover:bg-gray-300 transition text-gray-600 hover:text-purple-700 cursor-pointer"
@@ -146,7 +139,6 @@ Your journey to smarter productivity starts here.`,
           </button>
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-8 mt-6">
           <Link to="/rewards">
             <button

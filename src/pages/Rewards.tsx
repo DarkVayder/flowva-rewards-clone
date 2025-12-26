@@ -40,7 +40,6 @@ export default function Rewards() {
           <StreakCard />
           <FeaturedCard
             title="Top Tool Spotlight"
-            buttonText="Claim 50 pts"
           />
         </div>
       </section>
