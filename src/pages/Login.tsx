@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -17,7 +18,6 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     try {
@@ -46,20 +46,23 @@ export default function Login() {
           if (referredBy) {
             await supabase.rpc('increment_profile_stats', {
               ref_code: referredBy,
-              point_inc: 100, 
+              point_inc: 100,
             });
           }
 
           await supabase.auth.signInWithPassword({ email, password });
+          toast.success('Account created successfully 🎉');
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+
+        toast.success('Welcome back 👋');
       }
 
       navigate('/rewards');
     } catch (err: any) {
-      setError(err?.message || 'An unexpected error occurred');
+      toast.error(err?.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -69,14 +72,16 @@ export default function Login() {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/rewards${referredBy ? `?ref=${referredBy}` : ''}`,
+        redirectTo: `${window.location.origin}/rewards${
+          referredBy ? `?ref=${referredBy}` : ''
+        }`,
       },
     });
   };
 
   const handleForgotPassword = async () => {
     if (!email) {
-      setError('Enter your email to reset password.');
+      toast.warning('Enter your email to reset password');
       return;
     }
 
@@ -84,125 +89,113 @@ export default function Login() {
       redirectTo: `${window.location.origin}/reset-password`,
     });
 
-    if (error) setError(error.message);
-    else alert('Password reset email sent.');
+    if (error) toast.error(error.message);
+    else toast.success('Password reset email sent 📧');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#9013fe] to-[#6D28D9] px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white px-8 py-12 rounded-3xl shadow-2xl"
-      >
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-purple-700 mb-2">
-            {isSignup ? 'Create an account' : 'Log in to Flowva'}
-          </h1>
-          <p className="text-sm text-gray-500 leading-relaxed">
-            {isSignup
-              ? 'Sign up to manage your tools and rewards'
-              : 'Welcome back — Login to receive personalized recommendations'}
-          </p>
-        </div>
+    <>
+      <ToastContainer position="top-right" autoClose={3000} />
 
-        {error && (
-          <div className="mb-6 text-sm text-red-600 bg-red-50 border border-red-100 p-3 rounded-lg">
-            {error}
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#9013fe] to-[#6D28D9] px-4">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-md bg-white px-8 py-12 rounded-3xl shadow-2xl"
+        >
+          <div className="text-center mb-10">
+            <h1 className="text-3xl font-bold text-purple-700 mb-2">
+              {isSignup ? 'Create an account' : 'Log in to Flowva'}
+            </h1>
+            <p className="text-sm text-gray-500">
+              {isSignup
+                ? 'Sign up to manage your tools and rewards'
+                : 'Welcome back — Log In to receive personalized recommendations'}
+            </p>
           </div>
-        )}
 
-        {/* Email */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input
-            type="email"
-            placeholder="user@example.com"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-          />
-        </div>
-
-        {/* Password */}
-        <div className="mb-3">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-          <div className="relative">
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
             <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="••••••••"
+              type="email"
               required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border rounded-xl pr-12 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-purple-500"
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
-            >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
           </div>
-        </div>
 
-        {/* Forgot password */}
-        {!isSignup && (
-          <div className="flex justify-end mb-8">
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className="text-sm text-purple-600 hover:underline cursor-pointer"
-            >
-              Forgot password?
-            </button>
+          <div className="mb-3">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 border rounded-xl pr-12 focus:ring-2 focus:ring-purple-500"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
-        )}
 
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3 rounded-full bg-purple-600 text-white font-semibold text-base hover:bg-purple-700 transition disabled:opacity-60 cursor-pointer"
-        >
-          {loading
-            ? 'Please wait...'
-            : isSignup
-            ? 'Create account'
-            : 'Sign in'}
-        </button>
+          {!isSignup && (
+            <div className="flex justify-end mb-8">
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="text-sm text-purple-600 hover:underline cursor-pointer"
+              >
+                Forgot password?
+              </button>
+            </div>
+          )}
 
-        {/* Divider */}
-        <div className="flex items-center gap-3 my-8">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-xs tracking-wider text-gray-400">or</span>
-          <div className="flex-1 h-px bg-gray-200" />
-        </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 disabled:opacity-60 cursor-pointer"
+          >
+            {loading ? 'Please wait...' : isSignup ? 'Create account' : 'Sign in'}
+          </button>
 
-        {/* Google Auth */}
-        <button
-          type="button"
-          onClick={handleGoogleAuth}
-          className="w-full flex items-center justify-center gap-3 py-3 rounded-full border border-gray-300 bg-white hover:bg-gray-50 font-medium transition cursor-pointer"
-        >
-          <FaGoogle />
-          Continue with Google
-        </button>
+          <div className="flex items-center gap-3 my-8">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs text-gray-400">or</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
 
-        {/* Toggle */}
-        <div className="mt-10 text-center">
           <button
             type="button"
-            onClick={() => setIsSignup(!isSignup)}
-            className="text-sm text-purple-600 hover:underline cursor-pointer"
+            onClick={handleGoogleAuth}
+            className="w-full flex items-center justify-center gap-3 py-3 rounded-full border bg-white hover:bg-gray-200 cursor-pointer"
           >
-            {isSignup
-              ? 'Already have an account? Sign in'
-              : "Don’t have an account? Sign up"}
+            <FaGoogle />
+            Continue with Google
           </button>
-        </div>
-      </form>
-    </div>
+
+          <div className="mt-10 text-center">
+            <button
+              type="button"
+              onClick={() => setIsSignup(!isSignup)}
+              className="text-sm text-purple-600 hover:underline cursor-pointer"
+            >
+              {isSignup
+                ? 'Already have an account? Sign in'
+                : "Don’t have an account? Sign up"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 }
