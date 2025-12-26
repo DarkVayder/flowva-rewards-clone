@@ -8,14 +8,20 @@ export default function AuthCallback() {
   const [params] = useSearchParams();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
         const ref = params.get('ref');
-        navigate(ref ? `/rewards?ref=${ref}` : '/rewards', { replace: true });
-      } else {
-        navigate('/login', { replace: true });
+        navigate(ref ? `/rewards?ref=${ref}` : '/rewards', {
+          replace: true,
+        });
       }
     });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   return <Loader />;
