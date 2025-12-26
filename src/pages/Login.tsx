@@ -126,6 +126,7 @@ export default function Login() {
             </label>
             <input
               type="email"
+              placeholder='user@email.com'
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -140,6 +141,7 @@ export default function Login() {
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
+                placeholder='*******'
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

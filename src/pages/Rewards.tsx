@@ -29,7 +29,6 @@ export default function Rewards() {
         activeTab="earn"
       />
 
-      {/* Your Rewards Journey */}
       <section>
         <h2 className="text-lg font-semibold mb-4 border-l-4 border-purple-600 pl-3">
           Your Rewards Journey
@@ -44,7 +43,6 @@ export default function Rewards() {
         </div>
       </section>
 
-      {/* Earn More Points */}
       <section>
         <h2 className="text-lg font-semibold mb-4 border-l-4 border-purple-600 pl-3">
           Earn More Points
@@ -52,7 +50,6 @@ export default function Rewards() {
         <EarnMorePoints />
       </section>
 
-      {/* Refer and Earn */}
       <section>
         <h2 className="text-lg font-semibold mb-4 border-l-4 border-purple-600 pl-3">
           Refer and Earn
@@ -60,7 +57,6 @@ export default function Rewards() {
         <ReferAndEarn />
       </section>
 
-      {/* Footer social icons */}
       <footer className="flex flex-wrap justify-center gap-4 sm:gap-6 text-2xl text-gray-500">
         <FaFacebook className="hover:text-blue-600 transition-colors" />
         <FaWhatsapp className="hover:text-green-500 transition-colors" />
