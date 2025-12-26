@@ -1,73 +1,102 @@
-# React + TypeScript + Vite
+# Flowva Rewards Clone
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A **React + Supabase clone** of the Rewards page from [Flowva Hub](https://www.flowvahub.com).  
+Built as part of a **React Full-Stack Developer** assessment to showcase UI accuracy, functional logic, and full-stack integration.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Live Demo
 
-## React Compiler
+[🔗 View Live Page](https://flowva-rewards-clone-chi.vercel.app/)  
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Repository
 
-## Expanding the ESLint configuration
+[🔗 GitHub Repo](https://github.com/DarkVayder/flowva-rewards-clone)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Features
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Authentication:** Signup, login, and logout via Supabase  
+- **Rewards & Points:** Dynamic display of user rewards, points, and streaks  
+- **Real-time Data:** Fetch and update user data directly from Supabase  
+- **Error Handling:** Loading, empty, and error states handled gracefully  
+- **Clean UI:** Responsive and visually faithful to Flowva Hub  
+- **Notifications:** Toast messages for user actions  
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Tech Stack
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Frontend:** React 19 + TailwindCSS  
+- **Backend:** Supabase (auth, database, API queries)  
+- **Routing:** React Router DOM  
+- **Icons & UI:** Lucide React + React Icons, React Toastify  
+- **Language:** TypeScript for type safety  
+- **Linting & Quality:** ESLint  
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+
+## Installation & Setup
+
+1. Clone the repo:
+
+```bash
+git clone https://github.com/DarkVayder/flowva-rewards-clone.git
+cd flowva-rewards-clone
+Install dependencies:
+
+bash
+Copy code
+npm install
+Configure Supabase:
+
+Create a Supabase project
+
+Add .env file at root with:
+
+env
+Copy code
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+Start the dev server:
+
+bash
+Copy code
+npm run dev
+Open your browser at http://localhost:5173.
+
+Project Structure
+bash
+Copy code
+src/
+├─ assets/       # Logos, images, icons
+├─ components/   # Reusable UI components
+├─ hooks/        # Custom hooks (auth, points, streaks)
+├─ lib/          # Supabase client setup
+├─ pages/        # Main pages (Rewards, Login, Signup)
+└─ App.tsx       # App routing & root component
+Key Highlights
+Supabase Integration: Full use of authentication, queries, and database updates
+
+React Best Practices: Modular, reusable components, custom hooks, clean state management
+
+UI & UX: Faithful replication of Flowva Hub Rewards page
+
+Error & Loading States: Properly handled for seamless UX
+
+Assumptions & Trade-offs
+Focused only on Rewards functionality
+
+Supabase calls are placed in hooks for clarity; in production, a separate service layer is recommended
+
+Some minor styling tweaks were made for responsiveness
+
+Author
+DarkVayder
+GitHub: https://github.com/DarkVayder
+
+
+
+
+
