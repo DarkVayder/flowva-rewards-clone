@@ -79,12 +79,12 @@ export default function Login() {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/rewards${
+        redirectTo: `${window.location.origin}/auth/callback${
           referredBy ? `?ref=${referredBy}` : ''
-        }`,
-      },
-    });
-  };
+          }`,
+        },
+      });
+    };
 
   const handleForgotPassword = async () => {
     if (!email) {
@@ -150,7 +150,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
